@@ -21,7 +21,7 @@ class MessageHandler:
             return match.group("twitter_handle")
 
     def is_twitter_status(self, message: str) -> bool:
-        pattern = r"^(https://twitter.com/|https://mobile.twitter.com/)(\w+)/status/(\d+)$"
+        pattern = r"^(https://twitter.com/|https://mobile.twitter.com/)(\w+)/status/*"
         match = re.search(pattern, message)
         return bool(match)
     
@@ -41,10 +41,12 @@ class MessageHandler:
         return launch_date
 
     async def handle(self, message: str, author: str):
+        print(self.is_twitter_status(message))
         if not self.is_twitter_status(message):
             self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
             return self.status
         twitter_handle = self.twitter_handle_match(message)
+        print(twitter_handle)
         if not twitter_handle:
             self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
             return self.status
