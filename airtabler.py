@@ -16,8 +16,8 @@ class Airtabler:
         records = airtable.insert({"Twitter Profile": twitter_link,"Announcement": announcement, "Author": author, "Launch Date": launch_date})
         return records
 
-    async def find_profile_record(self, twitter_link: str) -> list:
-        return airtable.search("Twitter Profile", twitter_link.lower())
+    async def find_profile_record(self, twitter_link: str) -> dict:
+        return airtable.search("Twitter Profile", twitter_link)
 
-    async def find_announcement_record(self, announcement: str) -> list:
-        return airtable.search("Announcement", announcement.lower())
+    async def find_announcement_record(self, announcement: str) -> dict:
+        return airtable.search("Announcement", announcement)
