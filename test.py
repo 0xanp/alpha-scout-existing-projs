@@ -55,19 +55,19 @@ class TestGoogleSheetReader(unittest.TestCase):
 
 class TestMessageHandler(unittest.TestCase):
     handler = MessageHandler()
-    DUPLICATE_ANOUNCEMENTS = ["https://mobile.twitter.com/Vince_Van_Dough/status/1595138009804206080", # similar record 
-                            "https://twitter.com/Vince_Van_Dough/status/1595138009804206080?s=20&t=HuZo8oFIRpxXnRkrYjRImQ", #similar record
-                            "https://twitter.com/0xAnP/status/25332523523532",# similar record
-                            "https:twitter.com/Vince_Van_Dough/status/43232322323" # not similar but exceed the limit of 4
-                            "https://mobile.twitter.com/Vince_Van_Dough/status/4124124211241" # not similar but exceed the limit of 4
-                            ]
+    DUPLICATE_ANOUNCEMENTS = {"https://mobile.twitter.com/Vince_Van_Dough/status/1595138009804206080":"https://twitter.com/Vince_Van_Dough", # similar record 
+                            "https://twitter.com/Vince_Van_Dough/status/1595138009804206080?s=20&t=HuZo8oFIRpxXnRkrYjRImQ":"https://twitter.com/Vince_Van_Dough", #similar record
+                            "https://twitter.com/Vince_Van_Dough/status/43232322323":"https://twitter.com/Vince_Van_Dough", # not similar but exceed the limit of 4
+                            "https://mobile.twitter.com/Vince_Van_Dough/status/4124124211241":"https://twitter.com/Vince_Van_Dough", # not similar but exceed the limit of 4
+                            "https://twitter.com/0xAnP/status/25332523523532":"https://twitter.com/0xAnP/"
+                            }
     async def test_does_record_exist(self):
         print("\nTESTING does_record_exist...")
-        for duplicate in self.DUPLICATE_ANOUNCEMENTS:
-            exists = await self.handler.does_record_exist(duplicate)
+        for announcement in self.DUPLICATE_ANOUNCEMENTS:
+            exists = await self.handler.does_record_exist(self.DUPLICATE_ANOUNCEMENTS[announcement], announcement)
             self.assertTrue(exists)
-        
-        exists = await self.handler.does_record_exist("https://twitter.com/0xAnP/status/32342323432")
+
+        exists = await self.handler.does_record_exist("https://twitter.com/0xAnP/status/23534534534534","https://twitter.com/0xAnP")
         self.assertFalse(exists)
 
         print("PASSED")
@@ -80,8 +80,9 @@ class TestMessageHandler(unittest.TestCase):
         self.assertEqual(result, MessageHandler.STATUS['BAD_TWITTER_LINK'])
 
         # DUPLICATE_RECORD
-        for duplicate in self.DUPLICATE_ANOUNCEMENTS:
-            result = await self.handler.handle(f"{duplicate} 2022", author)
+        for announcement in self.DUPLICATE_ANOUNCEMENTS:
+            result = await self.handler.handle(f"{announcement} 2022", author)
+            print(announcement)
             self.assertEqual(result, MessageHandler.STATUS['DUPLICATE_RECORD'])
 
         # DB_SUCCESS
@@ -91,8 +92,8 @@ class TestMessageHandler(unittest.TestCase):
 
         # DB_SAVING_ERROR
         with patch.object(Airtabler, 'create_record', MagicMock(side_effect=Exception("intentionally generated TEST Error"))):
-            twitter_link = "https://twitter.com/prometheansxyz/status/1611133847420403713?s=20&t=HuZo8oFIRpxXnRkrYjRImQ"
-            result =  await self.handler.handle(twitter_link, author)
+            twitter_link = "https://twitter.com/prometheansxyz/status/3242423432423432"
+            result = await self.handler.handle(f"{twitter_link} 2022", author)
             self.assertEqual(result, MessageHandler.STATUS['DB_SAVING_ERROR'])
         print("PASSED")
 

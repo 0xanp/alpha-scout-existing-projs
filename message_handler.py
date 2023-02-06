@@ -25,7 +25,7 @@ class MessageHandler:
         match = re.search(pattern, message)
         return bool(match)
     
-    def tweet_status_id_match(message):
+    def tweet_status_id_match(self, message):
         return message.split('/')[-1].split('?')[0]
 
 
