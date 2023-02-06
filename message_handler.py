@@ -28,23 +28,11 @@ class MessageHandler:
     def tweet_status_id_match(self, message):
         return message.split('/')[-1].split('?')[0]
 
-
     def url_match(self, url: str) -> str:
         match = re.search(r'(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)', url)
         if match:
             return match.group(0)
 
-    '''
-    def parse_launch_date(self, message: str, twitter_handle: str = None) -> str:
-        if not twitter_handle:
-            twitter_handle = self.twitter_handle_match(message)
-        url = self.url_match(message)
-        if not url:
-            raise ValueError(f"There is not URL in this message: '{message}'")
-        launch_date = message.replace(url, "")
-        launch_date = re.sub(r"^[^a-z\d]*|[^a-z\d]*$", "", launch_date, flags=re.IGNORECASE)
-        return launch_date
-    '''
     async def handle(self, message: str, author: str):
         message = self.url_match(message)
         if not message:

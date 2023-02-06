@@ -237,41 +237,7 @@ class TestMessageHandler(unittest.TestCase):
         url = "https://www.twitter.com/Moonbirds55_?t=yUnZi2HaVMlwaSGs_Dyzxw&s=09.April 5, 2023"
         self.assertEqual(self.handler.url_match(url), "https://www.twitter.com/Moonbirds55_?t=yUnZi2HaVMlwaSGs_Dyzxw&s=09.April")
         print("PASSED")
-    
-    '''
-    def test_parse_launch_date(self):
-        print("\nTESTING parse_launch_date...")
 
-        # space delimited
-        print("space delimited")
-        message = "https://twitter.com/_GoeyGeese1 2023"
-        self.assertEqual(self.handler.parse_launch_date(message), "2023")
-        print("PASSED")
-
-        # space delimited with date and comma
-        print("space delimited with date and comma")
-        message = "https://twitter.com/_GoeyGeese1 April 5, 2023"
-        self.assertEqual(self.handler.parse_launch_date(message), "April 5, 2023")
-        print("PASSED")
-
-        # comma delimited
-        print("comma delimited")
-        message = "https://twitter.com/_GoeyGeese1,2023"
-        self.assertEqual(self.handler.parse_launch_date(message), "2023")
-        print("PASSED")
-        
-        # url with query string and comma delimited
-        print("url with query string and comma delimited")
-        message = "https://mobile.twitter.com/Moonbirds55_?t=yUnZi2HaVMlwaSGs_Dyzxw&s=09,April 5, 2023"
-        self.assertEqual(self.handler.parse_launch_date(message), "April 5, 2023")
-        print("PASSED")
-
-        # period delimited
-        print("period delimited (unexpected!)")
-        message = "https://mobile.twitter.com/Moonbirds55_?t=yUnZi2HaVMlwaSGs_Dyzxw&s=09.April 5, 2023"
-        self.assertEqual(self.handler.parse_launch_date(message), "5, 2023")
-        print("PASSED")
-    '''
 
 async def main():
     print("Testing Alpha Scout Bot...")
@@ -292,7 +258,6 @@ async def main():
     message_handler_tester.test_url_match()
     message_handler_tester.test_is_twitter_status()
     message_handler_tester.test_tweet_status_id_match()
-    #message_handler_tester.test_parse_launch_date()
     message_handler_tester.test_twitter_handle_match()
     print("\nDone Testing Alpha Scout Bot!")
 

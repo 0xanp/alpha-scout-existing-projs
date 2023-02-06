@@ -23,7 +23,7 @@ async def on_message(message):
     handler = MessageHandler()
     result = await handler.handle(message.content, message_username(message))
     if result == MessageHandler.STATUS['BAD_TWITTER_LINK']:
-        await message.reply(f":x: Invalid Format: Please enter the project Tweet link (i.e. it should start with https://www.twitter.com/twitter-username/status/)\n{EXAMPLES}")
+        await message.reply(f":x: Invalid Format: Please enter a link to a TWEET from an existing project (i.e. it should start with https://www.twitter.com/twitter-username/status/)\n{EXAMPLES}")
     elif result == MessageHandler.STATUS['DB_SUCCESS']:
         await message.reply(":white_check_mark: Thank You! Successfully Saved")
     elif result == MessageHandler.STATUS['DUPLICATE_RECORD']:
