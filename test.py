@@ -5,14 +5,15 @@ from message_handler import MessageHandler
 from google_sheets_reader import GoogleSheetReader
 import asyncio
 
-class TestAirtabler(unittest.TestCase):
-    airtabler = Airtabler()
-    ANNOUNCEMENT_RECORDS = ["https://twitter.com/Vince_Van_Dough/status/1595138009804206080",
-                            "https://twitter.com/Vince_Van_Dough/status/1622399935042707456",
-                            "https://twitter.com/Vince_Van_Dough/status/1622386264581226498",
-                            "https://twitter.com/Vince_Van_Dough/status/1622252918123466752",
-                            "https://twitter.com/0xAnP/status/25332523523532"
-                            ]
+class TestAirtabler(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self.airtabler = Airtabler()
+        self.ANNOUNCEMENT_RECORDS = ["https://twitter.com/Vince_Van_Dough/status/1595138009804206080",
+                                "https://twitter.com/Vince_Van_Dough/status/1622399935042707456",
+                                "https://twitter.com/Vince_Van_Dough/status/1622386264581226498",
+                                "https://twitter.com/Vince_Van_Dough/status/1622252918123466752",
+                                "https://twitter.com/0xAnP/status/25332523523532"
+                                ]
 
     async def test_create_record(self):
         print("\nTESTING create_record...")
@@ -41,6 +42,7 @@ class TestAirtabler(unittest.TestCase):
         self.assertEqual(len(records), 5)
         self.assertEqual(records[0]['fields']["Twitter Profile"], profile)
         print("PASSED")
+
 '''
 class TestGoogleSheetReader(unittest.TestCase):
     async def test_read_data(self):
@@ -53,14 +55,16 @@ class TestGoogleSheetReader(unittest.TestCase):
         print("PASSED")
 '''
 
-class TestMessageHandler(unittest.TestCase):
-    handler = MessageHandler()
-    DUPLICATE_ANOUNCEMENTS = {"https://mobile.twitter.com/Vince_Van_Dough/status/1595138009804206080":"https://twitter.com/Vince_Van_Dough", # similar record 
-                            "https://twitter.com/Vince_Van_Dough/status/1595138009804206080?s=20&t=HuZo8oFIRpxXnRkrYjRImQ":"https://twitter.com/Vince_Van_Dough", #similar record
-                            "https://twitter.com/Vince_Van_Dough/status/43232322323":"https://twitter.com/Vince_Van_Dough", # not similar but exceed the limit of 4
-                            "https://mobile.twitter.com/Vince_Van_Dough/status/4124124211241":"https://twitter.com/Vince_Van_Dough", # not similar but exceed the limit of 4
-                            "https://twitter.com/0xAnP/status/25332523523532":"https://twitter.com/0xAnP/"
-                            }
+class TestMessageHandler(unittest.IsolatedAsyncioTestCase):
+    def setUp(self) -> None:
+        self.handler = MessageHandler()
+        self.DUPLICATE_ANOUNCEMENTS = {"https://mobile.twitter.com/Vince_Van_Dough/status/1595138009804206080":"https://twitter.com/Vince_Van_Dough", # similar record 
+                                "https://twitter.com/Vince_Van_Dough/status/1595138009804206080?s=20&t=HuZo8oFIRpxXnRkrYjRImQ":"https://twitter.com/Vince_Van_Dough", #similar record
+                                "https://twitter.com/Vince_Van_Dough/status/43232322323":"https://twitter.com/Vince_Van_Dough", # not similar but exceed the limit of 4
+                                "https://mobile.twitter.com/Vince_Van_Dough/status/4124124211241":"https://twitter.com/Vince_Van_Dough", # not similar but exceed the limit of 4
+                                "https://twitter.com/0xAnP/status/25332523523532":"https://twitter.com/0xAnP/"
+                                }
+
     async def test_does_record_exist(self):
         print("\nTESTING does_record_exist...")
         for announcement in self.DUPLICATE_ANOUNCEMENTS:
@@ -238,29 +242,5 @@ class TestMessageHandler(unittest.TestCase):
         self.assertEqual(self.handler.url_match(url), "https://www.twitter.com/Moonbirds55_?t=yUnZi2HaVMlwaSGs_Dyzxw&s=09.April")
         print("PASSED")
 
-
-async def main():
-    print("Testing Alpha Scout Bot...")
-    # Testing airtabler
-    airtabler_tester = TestAirtabler()
-    await airtabler_tester.test_create_record()
-    await airtabler_tester.test_find_announcement_record()
-    await airtabler_tester.test_find_profile_record()
-    '''
-    # Testing google_sheets_reader
-    google_sheets_reader_tester = TestGoogleSheetReader()
-    await google_sheets_reader_tester.test_read_data()
-    '''
-    # Testing message_handler
-    message_handler_tester = TestMessageHandler()
-    await message_handler_tester.test_handle()
-    await message_handler_tester.test_does_record_exist()
-    message_handler_tester.test_url_match()
-    message_handler_tester.test_is_twitter_status()
-    message_handler_tester.test_tweet_status_id_match()
-    message_handler_tester.test_twitter_handle_match()
-    print("\nDone Testing Alpha Scout Bot!")
-
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    unittest.main()
