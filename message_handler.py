@@ -25,11 +25,16 @@ class MessageHandler:
         match = re.search(pattern, message)
         return bool(match)
     
+    def tweet_status_id_match(message):
+        return message.split('/')[-1].split('?')[0]
+
+
     def url_match(self, url: str) -> str:
         match = re.search(r'(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)', url)
         if match:
             return match.group(0)
 
+    '''
     def parse_launch_date(self, message: str, twitter_handle: str = None) -> str:
         if not twitter_handle:
             twitter_handle = self.twitter_handle_match(message)
@@ -39,30 +44,34 @@ class MessageHandler:
         launch_date = message.replace(url, "")
         launch_date = re.sub(r"^[^a-z\d]*|[^a-z\d]*$", "", launch_date, flags=re.IGNORECASE)
         return launch_date
-
+    '''
     async def handle(self, message: str, author: str):
-        print(self.is_twitter_status(message))
+        message = self.url_match(message)
+        if not message:
+            self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
+            return self.status
+        
         if not self.is_twitter_status(message):
             self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
             return self.status
+
         twitter_handle = self.twitter_handle_match(message)
-        print(twitter_handle)
         if not twitter_handle:
             self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
             return self.status
-        twitter_link = f"https://twitter.com/{twitter_handle}"
-        launch_date = self.parse_launch_date(message, twitter_handle)
 
-        if not twitter_link:
-            self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
-            return self.status
+        twitter_profile = f"https://twitter.com/{twitter_handle}"
+        #launch_date = self.parse_launch_date(message, twitter_handle)
 
-        if await self.does_record_exist(twitter_link, message):
+        status_id = self.tweet_status_id_match(message)
+        annoucement = f"{twitter_profile}/status/{status_id}"
+        
+        if await self.does_record_exist(twitter_profile, annoucement):
             self.status = MessageHandler.STATUS["DUPLICATE_RECORD"]
             return self.status   
         airtabler = Airtabler()
         try:
-            records = await airtabler.create_record(twitter_link, message, launch_date, author)
+            records = await airtabler.create_record(twitter_profile, annoucement, author)
             if records and len(records) > 0:
                 return MessageHandler.STATUS["DB_SUCCESS"]
         except Exception as err:
@@ -71,10 +80,10 @@ class MessageHandler:
                 print(err)
             return MessageHandler.STATUS["DB_SAVING_ERROR"]
 
-    async def does_record_exist(self, twitter_link: str, message: str) -> bool:
+    async def does_record_exist(self, twitter_profile: str, annoucement: str) -> bool:
         airtabler = Airtabler()
-        profiles_records = await airtabler.find_profile_record(twitter_link)
-        announcement_records = await airtabler.find_announcement_record(message)
+        profiles_records = await airtabler.find_profile_record(twitter_profile)
+        announcement_records = await airtabler.find_announcement_record(annoucement)
         if announcement_records and len(announcement_records) > 0:
             return True
         if profiles_records and len(profiles_records) > 3:

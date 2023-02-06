@@ -14,7 +14,7 @@ async def on_ready():
 def message_username(message: discord.Message) -> str:
     return message.author.name + "#" + message.author.discriminator
 
-EXAMPLES = "for example\nhttps://twitter.com/prometheansxyz/status/1619087210250371072?s=20&t=F-HswS5r0Rlck4V395TPvg\nor\nhttps://mobile.twitter.com/jollyswap/status/1605958314390474754?s=20&t=F-HswS5r0Rlck4V395TPvg\n\nIf you know the estimated launch date, you can add it after the twitter link, like \nhttps://twitter.com/zerodotfun/status/1604315597977706497?s=20&t=F-HswS5r0Rlck4V395TPvg December 20, 2022\nor\nhttps://mobile.twitter.com/CryptoDickbutts/status/1601029021331963905?s=20&t=F-HswS5r0Rlck4V395TPvg Q3 2023\nWe are currently only taking in 4 announcements per project per month"
+EXAMPLES = "for example\nhttps://twitter.com/prometheansxyz/status/1619087210250371072?s=20&t=F-HswS5r0Rlck4V395TPvg\nor\nhttps://mobile.twitter.com/jollyswap/status/1605958314390474754?s=20&t=F-HswS5r0Rlck4V395TPvg\n\nWe are currently only taking in 4 announcements per project per month"
 
 @client.event
 async def on_message(message):
