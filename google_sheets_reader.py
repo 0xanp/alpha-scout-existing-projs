@@ -14,9 +14,3 @@ class GoogleSheetReader:
         df = pd.read_excel(self.spreadsheet_url, usecols="A")
         df = df.astype(str).apply(lambda x: x.str.lower())
         return [url[0] for url in df.values.tolist()]
-
-async def main():
-    google_reader = GoogleSheetReader()
-    print(await google_reader.read_data())
-
-asyncio.run(main())

@@ -34,7 +34,7 @@ class MessageHandler:
         if match:
             return match.group(0)
     
-    def is_notable(self, twitter_link):
+    async def is_notable(self, twitter_link):
         reader = GoogleSheetReader()
         lower_case_twitter = twitter_link.lower()
         sheet_entries = await reader.read_data()
@@ -59,7 +59,7 @@ class MessageHandler:
 
         twitter_profile = f"https://twitter.com/{twitter_handle}"
 
-        if not self.is_notable(twitter_profile):
+        if not await self.is_notable(twitter_profile):
             self.status = MessageHandler.STATUS["NOT_FROM_NFT_LIST"]
             return self.status
 
