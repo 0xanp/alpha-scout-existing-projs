@@ -24,6 +24,8 @@ async def on_message(message):
     result = await handler.handle(message.content, message_username(message))
     if result == MessageHandler.STATUS['BAD_TWITTER_LINK']:
         await message.reply(f":x: Invalid Format: Please enter a link to a TWEET from an existing project (i.e. it should start with https://www.twitter.com/twitter-username/status/)\n{EXAMPLES}")
+    elif result == MessageHandler.STATUS['NOT_FROM_NFT_LIST']:
+        await message.reply(":x: Please submit an announcement of a project from this list https://docs.google.com/spreadsheets/d/1gu1ZY7HCZH87RwqNOvjgJI3xog7qwhN_A43JzyQF1Pc/edit?usp=sharing")
     elif result == MessageHandler.STATUS['DB_SUCCESS']:
         await message.reply(":white_check_mark: Thank You! Successfully Saved")
     elif result == MessageHandler.STATUS['DUPLICATE_RECORD']:

@@ -7,6 +7,7 @@ class MessageHandler:
     STATUS = {
         'NONE': 'NONE',
         'BAD_TWITTER_LINK': 'BAD_TWITTER_LINK',
+        'NOT_FROM_NFT_LIST': 'NOT_FROM_NFT_LIST',
         'DUPLICATE_RECORD': 'DUPLICATE_RECORD',
         'DB_SUCCESS': 'DB_SUCCESS',
         'DB_SAVING_ERROR': 'DB_SAVING_ERROR'
@@ -32,6 +33,14 @@ class MessageHandler:
         match = re.search(r'(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)', url)
         if match:
             return match.group(0)
+    
+    def is_notable(self, twitter_link):
+        reader = GoogleSheetReader()
+        lower_case_twitter = twitter_link.lower()
+        sheet_entries = await reader.read_data()
+        if sheet_entries and lower_case_twitter in sheet_entries:
+            return True
+        return False
 
     async def handle(self, message: str, author: str):
         message = self.url_match(message)
@@ -49,7 +58,10 @@ class MessageHandler:
             return self.status
 
         twitter_profile = f"https://twitter.com/{twitter_handle}"
-        #launch_date = self.parse_launch_date(message, twitter_handle)
+
+        if not self.is_notable(twitter_profile):
+            self.status = MessageHandler.STATUS["NOT_FROM_NFT_LIST"]
+            return self.status
 
         status_id = self.tweet_status_id_match(message)
         annoucement = f"{twitter_profile}/status/{status_id}"
@@ -76,11 +88,5 @@ class MessageHandler:
             return True
         if profiles_records and len(profiles_records) > 3:
             return True
-        '''
-        reader = GoogleSheetReader()
-        lower_case_twitter = message.lower()
-        sheet_entries = await reader.read_data()
-        if sheet_entries and lower_case_twitter in sheet_entries:
-            return True
-        '''
+
         return False
