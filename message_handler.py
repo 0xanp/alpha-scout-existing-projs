@@ -57,7 +57,7 @@ class MessageHandler:
             self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
             return self.status
 
-        twitter_profile = f"https://twitter.com/{twitter_handle}"
+        twitter_profile = f"https://twitter.com/{twitter_handle.lower()}"
 
         if not await self.is_notable(twitter_profile):
             self.status = MessageHandler.STATUS["NOT_FROM_NFT_LIST"]
