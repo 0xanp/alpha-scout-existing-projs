@@ -34,9 +34,7 @@ class MessageHandler:
         if match:
             return match.group(0)
     
-    def parse_comment(self, message: str, twitter_handle: str = None) -> str:
-        if not twitter_handle:
-            twitter_handle = self.twitter_handle_match(message)
+    def parse_comment(self, message: str) -> str:
         url = self.url_match(message)
         if not url:
             raise ValueError(f"There is not URL in this message: '{message}'")
@@ -53,6 +51,7 @@ class MessageHandler:
         return False
 
     async def handle(self, message: str, author: str):
+        comment = self.parse_comment(message)
         message = self.url_match(message)
         if not message:
             self.status = MessageHandler.STATUS["BAD_TWITTER_LINK"]
@@ -68,7 +67,6 @@ class MessageHandler:
             return self.status
 
         twitter_profile = f"https://twitter.com/{twitter_handle.lower()}"
-        comment = self.parse_comment(message, twitter_handle)
 
         if not await self.is_notable(twitter_profile):
             self.status = MessageHandler.STATUS["NOT_FROM_NFT_LIST"]
