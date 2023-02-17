@@ -34,6 +34,16 @@ class MessageHandler:
         if match:
             return match.group(0)
     
+    def parse_comment(self, message: str, twitter_handle: str = None) -> str:
+        if not twitter_handle:
+            twitter_handle = self.twitter_handle_match(message)
+        url = self.url_match(message)
+        if not url:
+            raise ValueError(f"There is not URL in this message: '{message}'")
+        comment = message.replace(url, "")
+        comment = re.sub(r"^[^a-z\d]*|[^a-z\d]*$", "", comment, flags=re.IGNORECASE)
+        return comment
+    
     async def is_notable(self, twitter_link):
         reader = GoogleSheetReader()
         lower_case_twitter = twitter_link.lower()
@@ -58,6 +68,7 @@ class MessageHandler:
             return self.status
 
         twitter_profile = f"https://twitter.com/{twitter_handle.lower()}"
+        comment = self.parse_comment(message, twitter_handle)
 
         if not await self.is_notable(twitter_profile):
             self.status = MessageHandler.STATUS["NOT_FROM_NFT_LIST"]
@@ -71,7 +82,7 @@ class MessageHandler:
             return self.status   
         airtabler = Airtabler()
         try:
-            records = await airtabler.create_record(twitter_profile, annoucement, author)
+            records = await airtabler.create_record(twitter_profile, annoucement, author, comment)
             if records and len(records) > 0:
                 return MessageHandler.STATUS["DB_SUCCESS"]
         except Exception as err:
