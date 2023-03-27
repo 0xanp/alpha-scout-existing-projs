@@ -91,11 +91,12 @@ class MessageHandler:
 
     async def does_record_exist(self, twitter_profile: str, annoucement: str) -> bool:
         airtabler = Airtabler()
-        profiles_records = await airtabler.find_profile_record(twitter_profile)
+        #profiles_records = await airtabler.find_profile_record(twitter_profile)
         announcement_records = await airtabler.find_announcement_record(annoucement)
         if announcement_records and len(announcement_records) > 0:
             return True
+        '''
         if profiles_records and len(profiles_records) > 3:
             return True
-
+        '''
         return False

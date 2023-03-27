@@ -2,8 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 from airtabler import Airtabler
 from message_handler import MessageHandler
-from google_sheets_reader import GoogleSheetReader
-import asyncio
+#from google_sheets_reader import GoogleSheetReader
 
 class TestAirtabler(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
